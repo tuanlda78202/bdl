@@ -1,4 +1,4 @@
-# Lab 02 - Homework 1 
+# Lab 02 - Homework 2
 
 ## Setup
 
