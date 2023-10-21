@@ -1,23 +1,24 @@
 FROM ubuntu:latest
 
-MAINTAINER qducnguyen
-#environment variables for changing JDK, HADOOP versions and directories
+MAINTAINER tuanlda78202
+
+# Environment variables for changing JDK, HADOOP versions and directories
 ENV JDK_TAR_NAME=jdk-8u202-linux-x64.tar.gz
 ENV HADOOP_TAR_NAME=hadoop-3.3.6.tar.gz
 
-#install basic utils and python
+# Install basic utils and python
 RUN apt update
 RUN apt install -y python3 arp-scan openssh-server
 
-# ssh without key
-RUN ssh-keygen -t rsa -f ~/.ssh/id_rsa -P '' && \
-    cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+# SSH without key
+RUN ssh-keygen -t rsa -f ~/.ssh/id_rsa -P '' &&
+    cat ~/.ssh/id_rsa.pub >>~/.ssh/authorized_keys
 
-#***setup JDK***#
+### Setup JDK
 WORKDIR /opt
 ADD ./assets/${JDK_TAR_NAME} .
 
-#add path variables for JDK
+# Add path variables for JDK
 ENV JAVA_HOME=/opt/jdk1.8.0_202
 ENV PATH=$PATH:$JAVA_HOME:$JAVA_HOME/bin
 
@@ -25,16 +26,16 @@ ENV PATH=$PATH:$JAVA_HOME:$JAVA_HOME/bin
 RUN mkdir -p /opt/hdfs_data/datanode
 RUN mkdir -p /opt/hdfs_data/namenode
 
-#***setup hadoop***#
+### Setup Hadoop
 ADD ./assets/${HADOOP_TAR_NAME} .
 
-#adding path variables and environment variables for HADOOP
+# Adding path variables and environment variables for Hadoop
 ENV HADOOP_HOME=/opt/hadoop-3.3.6
 ENV HADOOP_STREAMING_JAR=$HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.3.6.jar
 ENV PATH=$PATH:$HADOOP_HOME:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
 
-#***CONFIGURATION***#
-#adding hadoop configuration files
+# Configuration
+# Adding hadoop configuration files
 ADD ./config-files/hadoop-env.sh $HADOOP_HOME/etc/hadoop/
 ADD ./config-files/core-site.xml $HADOOP_HOME/etc/hadoop/
 ADD ./config-files/mapred-site.xml $HADOOP_HOME/etc/hadoop/
